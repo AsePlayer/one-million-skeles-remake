@@ -38,14 +38,16 @@ public class UnitStateManager : MonoBehaviour
     void Update()
     {
         currentState.UpdateState(this);
-
-        if(aiPath.target.transform.position.x > transform.position.x)
+        if(aiPath.target)
         {
-            transform.root.transform.rotation = Quaternion.Euler(new Vector3 (0, -180, 0));
-        }
-        else
-        {
-            transform.root.transform.rotation = Quaternion.Euler(new Vector3 (0, 0 ,0));
+            if(aiPath.target.transform.position.x > transform.position.x)
+            {
+                transform.root.transform.rotation = Quaternion.Euler(new Vector3 (0, -180, 0));
+            }
+            else
+            {
+                transform.root.transform.rotation = Quaternion.Euler(new Vector3 (0, 0 ,0));
+            }
         }
     }
 

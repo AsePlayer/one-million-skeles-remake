@@ -23,4 +23,9 @@ public class UnitAttackingState : UnitBaseState
     public override void OnCollisionEnter(UnitStateManager unit) {
         
     }
+
+    public void doDamage() 
+    {
+        
+    }
 }

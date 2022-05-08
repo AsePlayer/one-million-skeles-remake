@@ -13,7 +13,6 @@ public class UnitChasingState : UnitBaseState
 
     public override void UpdateState(UnitStateManager unit) 
     {
-        // is enemy
         if(unit.aiPath != null)
         {
             // can no longer move (presumably because it reached the target)
