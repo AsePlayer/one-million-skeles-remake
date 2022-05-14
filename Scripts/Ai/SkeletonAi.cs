@@ -10,32 +10,32 @@ public class SkeletonAi : MonoBehaviour
     // Start is called before the first frame update
     void Awake()
     {
-        aiDestination = transform.root.GetComponent<AIDestinationSetter>();
+        aiDestination = GetComponent<AIDestinationSetter>();
+    }
+
+    void Start()
+    {
+        StartCoroutine(GetClosestEnemy());
     }
 
     // Update is called once per frame
     void Update()
     {
         if(aiDestination == null)
-            aiDestination = transform.root.GetComponent<AIDestinationSetter>();
-
-        if(aiDestination.target == null)
-        {
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Hero");
-            if(enemies.Length >= 0)
-            {
-                aiDestination.target = GetClosestEnemy(enemies);
-            }
-        }
+            aiDestination = GetComponent<AIDestinationSetter>();        
     }
 
-    Transform GetClosestEnemy (GameObject[] enemies)
+    IEnumerator GetClosestEnemy()
     {
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;
         Vector3 currentPosition = transform.position;
+
+        // Find all Heroes on screen
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Hero");
         foreach(GameObject potentialTarget in enemies)
         {
+            // Get closest Hero
             Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
             float dSqrToTarget = directionToTarget.sqrMagnitude;
             if(dSqrToTarget < closestDistanceSqr)
@@ -44,13 +44,14 @@ public class SkeletonAi : MonoBehaviour
                 bestTarget = potentialTarget.transform;
             }
         }
-     
-        return bestTarget;
+        // Set enemy A* destination to closest Hero
+        aiDestination.target = bestTarget;
+        yield return new WaitForSeconds(2);
     }
 
     void OnEnable()
     {
-        // Bullets will ignore Hole collision while Holes still maintain their physical blocking abilities for Units.
+        // Enemies will ignore Enemy collision.
         GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach (GameObject evil in enemies)
         {

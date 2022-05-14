@@ -7,41 +7,51 @@ public class KnightAi : MonoBehaviour
 {
     AIDestinationSetter aiDestination;
 
-    // Start is called before the first frame update
     void Awake()
     {
-        aiDestination = transform.root.GetComponent<AIDestinationSetter>();
+        aiDestination = GetComponent<AIDestinationSetter>();
+    }
+
+    void Start()
+    {
+        // Start enemy AI
+        StartCoroutine(GetClosestEnemy());
     }
 
     // Update is called once per frame
     void Update()
     {
-        if(aiDestination.target == null)
-        {
-            GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
-            if(enemies.Length >= 0)
-            {
-                aiDestination.target = GetClosestEnemy(enemies);
-            }
-        }
+        if(aiDestination == null)
+            aiDestination = GetComponent<AIDestinationSetter>();
+
+        if(aiDestination.target == null || aiDestination.target.GetComponent<Health>().isDead)
+            StartCoroutine(GetClosestEnemy());
     }
 
-    Transform GetClosestEnemy (GameObject[] enemies)
+    IEnumerator GetClosestEnemy()
     {
         Transform bestTarget = null;
         float closestDistanceSqr = Mathf.Infinity;
         Vector3 currentPosition = transform.position;
+
+        // Find all Enemies on screen
+        GameObject[] enemies = GameObject.FindGameObjectsWithTag("Enemy");
         foreach(GameObject potentialTarget in enemies)
         {
-            Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
-            float dSqrToTarget = directionToTarget.sqrMagnitude;
-            if(dSqrToTarget < closestDistanceSqr)
+            if(!potentialTarget.GetComponent<Health>().isDead)
             {
-                closestDistanceSqr = dSqrToTarget;
-                bestTarget = potentialTarget.transform;
+                // Get closest Enemy
+                Vector3 directionToTarget = potentialTarget.transform.position - currentPosition;
+                float dSqrToTarget = directionToTarget.sqrMagnitude;
+                if(dSqrToTarget < closestDistanceSqr)
+                {
+                    closestDistanceSqr = dSqrToTarget;
+                    bestTarget = potentialTarget.transform;
+                }
             }
         }
-     
-        return bestTarget;
+        // Set enemy A* destination to closest Enemy
+        aiDestination.target = bestTarget;
+        yield return new WaitForSeconds(2);
     }
 }

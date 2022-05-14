@@ -8,26 +8,16 @@ public class HitRegister : MonoBehaviour
     UnitStateManager unit;
     AIDestinationSetter aiDestination;
     int damage = 15;
-    // Start is called before the first frame update
+    
     void Awake()
     {
         unit = transform.root.GetComponent<UnitStateManager>();
         aiDestination = transform.root.GetComponent<AIDestinationSetter>();
     }
-    
-    void Start()
-    {
-        
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 
     void takeDamage()
     {
+        // If enemy is not dead, take the damage
         if(!aiDestination.target)
             return;
         aiDestination.target.GetComponent<Health>().takeDamage(damage);
